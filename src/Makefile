@@ -1,0 +1,1 @@
+obj-${CONFIG_BBP_K}	+= bbp-k.o ua/bbp-k-ua.o
