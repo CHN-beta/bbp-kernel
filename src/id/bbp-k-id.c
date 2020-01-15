@@ -35,7 +35,7 @@ static unsigned bbpId_execute(struct bbpWorker* worker_bbp, struct sk_buff* skb,
     return NF_ACCEPT;
 }
 
-void bbpId_delete(struct bbpWorker* worker_bbp)
+static void bbpId_delete(struct bbpWorker* worker_bbp)
 {
     struct bbpWorker_id* worker = worker_bbp;
     worker -> lock -> delete(worker -> lock);

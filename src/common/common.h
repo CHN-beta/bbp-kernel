@@ -31,10 +31,10 @@ static inline void bbpCommon_free(void* p)
 }
 
 static struct bbpWorker;
-typedef unsigned (*bbpExecute)(struct bbpWorker*, struct sk_buff*, bool*, bool*, bool*);
-// 后三个参数用来表示是否已经可写化、是否需要重新计算 ip 校验和、是否需要重新计算 tcp 校验和。
+typedef unsigned (*bbpExecute)(struct bbpWorker*, struct sk_buff*, bool*);
+// 最后是三个 bool，表示是否已经可写化、是否需要重新计算 ip 校验和、是否需要重新计算 tcp 校验和。
 // 如果需要重新计算 tcp 校验和，一定也会重新计算 ip 校验和（即使对应的返回值为 false）。
-// 只有在返回 NF_ACCEPT 的情况下会重新计算校验和，STOLEN 的让偷走的 worker 自己去算
+// 只有在返回 NF_ACCEPT 的情况下会重新计算校验和，STOLEN 的让偷走的 worker 自己去算（即使引起需要重新计算校验和的原因不是那个 worker）
 struct bbpWorker
 {
     bbpExecute execute;        // 处理一个数据包

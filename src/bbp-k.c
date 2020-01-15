@@ -14,10 +14,12 @@ unsigned hook_funcion(const struct nf_hook_ops *ops, struct sk_buff *skb, const 
 #endif
 {
 	unsigned i;
+	bool status[3];
+	memset(status, 0, sizeof(bool) * 3);
 	for(i = 0; worker[i] != 0; i++)
 	{
 		unsigned rtn;
-		rtn = worker[i] -> execute(worker[i], skb);
+		rtn = worker[i] -> execute(worker[i], skb, status);
 		if(rtn == NF_ACCEPT)
 			continue;
 		else if(rtn == NF_STOLEN)
@@ -25,10 +27,14 @@ unsigned hook_funcion(const struct nf_hook_ops *ops, struct sk_buff *skb, const 
 		else if(rtn == NF_DROP)
 			return NF_DROP;
 	}
+	if(status[2])
+		bbpCommon_csumTcp(skb);
+	else if(status[1])
+		bbpCommon_csumIp(skb);
 	return NF_ACCEPT;
 }
 
-unsigned goon(struct bbpWorker* bbpw, struct sk_buff* skb)
+static unsigned goon(struct bbpWorker* bbpw, struct sk_buff* skb, bool* status)
 {
 	unsigned p = -1, i;
 	for(i = 0; worker[i] != 0; i++)
@@ -38,7 +44,7 @@ unsigned goon(struct bbpWorker* bbpw, struct sk_buff* skb)
 		for(i = p + 1; worker[i] != 0; i++)
 		{
 			unsigned rtn;
-			rtn = worker[i] -> execute(worker[i], skb);
+			rtn = worker[i] -> execute(worker[i], skb, status);
 			if(rtn == NF_ACCEPT)
 				continue;
 			else if(rtn == NF_STOLEN)
@@ -53,8 +59,8 @@ static int __init hook_init(void)
 {
 	int ret;
 	unsigned i;
-	extern bbpWorkerCreator_t workerCreator_ual, workerCreator_ua, workerCreator_win, workerCreator_id;
-	const bbpWorkerCreator_t creator[] = {workerCreator_ual, workerCreator_ua, workerCreator_win, workerCreator_id, 0};
+	extern bbpWorkerCreator workerCreator_ua, workerCreator_win, workerCreator_id;
+	const bbpWorkerCreator creator[] = {workerCreator_ua, workerCreator_win, workerCreator_id, 0};
 	const unsigned hooknum[] = {NF_INET_LOCAL_IN, NF_INET_LOCAL_OUT, NF_INET_FORWARD};
 
 	bbpSetting_common_init();
