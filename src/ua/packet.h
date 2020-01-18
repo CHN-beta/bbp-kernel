@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "setting.h"
 
 static struct bbpUa_packet
 // 存储一个个数据包的类，完全被 bbpStream 和 bbpManager 包裹

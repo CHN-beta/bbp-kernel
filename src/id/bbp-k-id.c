@@ -10,27 +10,20 @@ static struct bbpWorker_id
     unsigned short id_next;
 };
 
-static unsigned bbpId_execute(struct bbpWorker* worker_bbp, struct sk_buff* skb, bool* writeable, bool* ipcheck, bool* tcpcheck)
+static unsigned bbpId_execute(struct bbpWorker* worker_bbp, struct sk_buff* skb, bool* status)
 {
     struct bbpWorker_id* worker = worker_bbp;
     if(!bbpId_setting_capture(skb))
         return NF_ACCEPT;
-    if(!*writeable)
-    {
-        *writeable = bbpCommon_makeWriteable(skb);
-        if(!*writeable)
-            return NF_ACCEPT;
-    }
     if(bbpId_setting_random)
         get_random_bytes(&ip_hdr(skb) -> id, 2);
     else
     {
-
         worker -> lock -> lock(worker -> lock);
         ip_hdr(skb) -> id = htons(worker -> id_next);
-        *ipcheck = true;
+        status[2] = true;
         worker -> id_next++;
-        worker -> lock -> lock(worker -> lock);
+        worker -> lock -> unlock(worker -> lock);
     }
     return NF_ACCEPT;
 }

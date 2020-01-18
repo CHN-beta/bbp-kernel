@@ -1,1 +1,1 @@
-obj-${CONFIG_BBP_K}	+= bbp-k.o ua/bbp-k-ua.o
+obj-${CONFIG_BBP_K}	+= bbp-k.o ua/bbp-k-ua.o id/bbp-k-id.o win/bbp-k-win.o

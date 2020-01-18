@@ -1,11 +1,11 @@
 #include "common/common.h"
 
 MODULE_AUTHOR("Haonan Chen");
-MODULE_DESCRIPTION("Modify UA in HTTP for anti-detection of router in XMU.");
+MODULE_DESCRIPTION("Kernel part of BBP.");
 MODULE_LICENSE("GPL");
 
 static struct nf_hook_ops nfho[3];				// 需要在 INPUT、OUTPUT、FORWARD 各挂一个
-static struct bbpWorker* worker[16];			// 多开几个，不费几个内存
+static struct bbpWorker* worker[8];			// 多开几个，不费几个内存
 
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,2,0)
 unsigned hook_funcion(void *priv, struct sk_buff *skb, const struct nf_hook_state *state)

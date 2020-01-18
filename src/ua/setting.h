@@ -28,7 +28,7 @@ bool bbpUa_setting_capture(const struct sk_buff* skb)
     else
         return (skb -> mark & bbpUa_setting_markCapture) == bbpUa_setting_markCapture;
 }
-bool bbpSetting_ack(const struct sk_buff* skb)
+bool bbpua_setting_ack(const struct sk_buff* skb)
 {
     if(bbpUa_setting_auto)
         return !bbpCommon_setting_local(skb) && bbpCommon_setting_recieve(skb)
